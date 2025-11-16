@@ -9,19 +9,19 @@ class DependencyAnalyzer:
         self.dependency_graph = {}
 
     def load_config(self, config_file):
-        """Этап 1: Загрузка конфигурации из YAML"""
+        #Этап 1: Загрузка конфигурации из YAML
         try:
             with open(config_file, 'r') as file:
                 config = yaml.safe_load(file)
 
-            # Проверяем обязательные параметры
+            # Проверка обязательных параметров
             required = ['package_name', 'repository_url', 'mode', 'version', 'output_file', 'max_depth']
             for param in required:
                 if param not in config:
                     raise ValueError(f"Не хватает параметра: {param}")
 
-            # Выводим все параметры
-            print("=== Конфигурационные параметры ===")
+            # Выводод всех параметров
+            print(" Конфигурационные параметры:")
             for key, value in config.items():
                 print(f"{key}: {value}")
 
@@ -33,9 +33,9 @@ class DependencyAnalyzer:
             raise ValueError(f"Ошибка в YAML файле: {e}")
 
     def get_package_info(self, package_name, version):
-        """Этап 2: Получение информации о пакете"""
+        #Этап 2: Получение информации о пакете
         if self.config['mode'] == 'test':
-            # Тестовый режим - читаем из файла
+            # Тест режим - читаем из файла
             try:
                 with open(self.config['repository_url'], 'r') as file:
                     test_data = json.load(file)
@@ -59,19 +59,19 @@ class DependencyAnalyzer:
             raise ValueError(f"Не удалось получить информацию о пакете {package_name}")
 
     def get_direct_dependencies(self, package_name, version):
-        """Этап 2: Получение прямых зависимостей"""
+        #Этап 2: Получение прямых зависимостей
         package_info = self.get_package_info(package_name, version)
         dependencies = package_info.get('dependencies', {})
 
         # Выводим прямые зависимости
-        print(f"\n=== Прямые зависимости {package_name}@{version} ===")
+        print(f"\n Прямые зависимости {package_name}@{version} ")
         for dep, ver in dependencies.items():
             print(f"{dep}: {ver}")
 
         return dependencies
 
     def build_dependency_graph(self, package_name, version, depth=0, path=None):
-        """Этап 3: Построение графа зависимостей с помощью DFS"""
+        #Этап 3: Построение графа зависимостей с помощью DFS
         if path is None:
             path = []
 
@@ -96,7 +96,7 @@ class DependencyAnalyzer:
                 self.build_dependency_graph(dep_name, dep_version, depth + 1, current_path)
 
     def run_analysis(self):
-        """Запуск всего анализа"""
+        #Запуск всего анализа
         print(" Запуск анализа зависимостей...")
 
         # Этап 3: Строим граф зависимостей
@@ -106,7 +106,7 @@ class DependencyAnalyzer:
         )
 
         # Выводим итоговый граф
-        print(f"\n=== Итоговый граф зависимостей ===")
+        print(f"\n Итоговый граф зависимостей: ")
         for package, deps in self.dependency_graph.items():
             print(f"{package}: {list(deps.keys())}")
 
